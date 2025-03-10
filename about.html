@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Developer Tools & Utilities</title>
+    <meta name="description" content="Learn about Muhammad Imran, a seasoned developer with 12 years of experience in various programming languages and successful project deliveries.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .about-header {
+            background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+            color: white;
+            padding: 4rem 0;
+            margin-bottom: 3rem;
+        }
+        .profile-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .skill-badge {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            border-radius: 20px;
+            background: #e9ecef;
+            color: #495057;
+        }
+        .experience-card {
+            border-left: 4px solid #0d6efd;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: white;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .project-card {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .project-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header will be loaded dynamically -->
+    <div id="header-placeholder"></div>
+
+    <main>
+        <!-- About Header -->
+        <div class="about-header">
+            <div class="container">
+                <h1 class="display-4">About Us</h1>
+                <p class="lead">Empowering developers with efficient tools and solutions</p>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- Profile Section -->
+            <div class="row mb-5">
+                <div class="col-lg-8">
+                    <div class="profile-section">
+                        <h2 class="mb-4">Muhammad Imran</h2>
+                        <h5 class="text-muted mb-3">Senior Full Stack Developer</h5>
+                        <p class="lead">With 12 years of extensive experience in software development, I've successfully delivered numerous projects across various domains and technologies.</p>
+                        <p>I specialize in creating efficient, scalable, and user-friendly applications that solve real-world problems. My passion lies in developing tools that make developers' lives easier and more productive.</p>
+                        
+                        <div class="mt-4">
+                            <h5>Core Competencies:</h5>
+                            <div class="d-flex flex-wrap gap-2 mt-3">
+                                <span class="skill-badge"><i class="bi bi-code-slash"></i> Full Stack Development</span>
+                                <span class="skill-badge"><i class="bi bi-window"></i> Web Applications</span>
+                                <span class="skill-badge"><i class="bi bi-tools"></i> Developer Tools</span>
+                                <span class="skill-badge"><i class="bi bi-gear"></i> System Architecture</span>
+                                <span class="skill-badge"><i class="bi bi-people"></i> Team Leadership</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Technical Expertise</h4>
+                            <div class="mb-4">
+                                <h6>Programming Languages</h6>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <span class="badge bg-primary">JavaScript</span>
+                                    <span class="badge bg-primary">Python</span>
+                                    <span class="badge bg-primary">PHP</span>
+                                    <span class="badge bg-primary">Java</span>
+                                    <span class="badge bg-primary">C#</span>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <h6>Frameworks & Libraries</h6>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <span class="badge bg-success">React</span>
+                                    <span class="badge bg-success">Node.js</span>
+                                    <span class="badge bg-success">Laravel</span>
+                                    <span class="badge bg-success">Django</span>
+                                    <span class="badge bg-success">Angular</span>
+                                </div>
+                            </div>
+                            <div>
+                                <h6>Tools & Technologies</h6>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <span class="badge bg-info">Git</span>
+                                    <span class="badge bg-info">Docker</span>
+                                    <span class="badge bg-info">AWS</span>
+                                    <span class="badge bg-info">MongoDB</span>
+                                    <span class="badge bg-info">MySQL</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Experience Section -->
+            <section class="mb-5">
+                <h3 class="mb-4">Professional Experience</h3>
+                <div class="experience-card">
+                    <h5>Senior Full Stack Developer</h5>
+                    <p class="text-muted">Leading development teams and architecting scalable solutions for enterprise clients. Specializing in web applications, developer tools, and system optimization.</p>
+                    <ul>
+                        <li>Developed and maintained multiple high-traffic web applications</li>
+                        <li>Led teams of developers in successful project deliveries</li>
+                        <li>Implemented best practices and coding standards</li>
+                        <li>Mentored junior developers and conducted code reviews</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Projects Section -->
+            <section class="mb-5">
+                <h3 class="mb-4">Featured Projects</h3>
+                <div class="row g-4">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="project-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Developer Tools Suite</h5>
+                                    <p class="card-text">A comprehensive collection of web-based tools for developers, including code formatters, validators, and utilities.</p>
+                                    <div class="d-flex flex-wrap gap-1">
+                                        <span class="badge bg-secondary">JavaScript</span>
+                                        <span class="badge bg-secondary">HTML5</span>
+                                        <span class="badge bg-secondary">CSS3</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="project-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Code Analysis Platform</h5>
+                                    <p class="card-text">Advanced tool for code quality analysis, performance optimization, and security vulnerability detection.</p>
+                                    <div class="d-flex flex-wrap gap-1">
+                                        <span class="badge bg-secondary">Python</span>
+                                        <span class="badge bg-secondary">React</span>
+                                        <span class="badge bg-secondary">Node.js</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="project-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">API Integration Hub</h5>
+                                    <p class="card-text">Centralized platform for managing and monitoring multiple API integrations with real-time analytics.</p>
+                                    <div class="d-flex flex-wrap gap-1">
+                                        <span class="badge bg-secondary">PHP</span>
+                                        <span class="badge bg-secondary">Laravel</span>
+                                        <span class="badge bg-secondary">Vue.js</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mission Section -->
+            <section class="mb-5">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h3 class="card-title">Our Mission</h3>
+                        <p class="lead">To provide developers with powerful, efficient, and user-friendly tools that enhance productivity and code quality.</p>
+                        <p>We believe in:</p>
+                        <ul>
+                            <li>Creating tools that simplify development workflows</li>
+                            <li>Maintaining high standards of code quality</li>
+                            <li>Supporting the developer community</li>
+                            <li>Continuous learning and improvement</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact Section -->
+            <section>
+                <div class="text-center py-4">
+                    <h3>Let's Connect</h3>
+                    <p class="lead">Have a project in mind or want to collaborate?</p>
+                    <a href="contact.html" class="btn btn-primary btn-lg">
+                        <i class="bi bi-envelope"></i> Get in Touch
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded dynamically -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html> 

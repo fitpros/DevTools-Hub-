@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schema Markup Generator - Create JSON-LD Structured Data</title>
+    <meta name="description" content="Generate schema markup in JSON-LD format for enhanced search results. Support for multiple schema types with rich snippet preview.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .calc-card {
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        .result-box {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        #schemaOutput {
+            font-family: monospace;
+            white-space: pre-wrap;
+            background: #2d2d2d;
+            color: #fff;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        .rich-snippet {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 1rem auto;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .schema-fields {
+            display: none;
+        }
+        .schema-fields.active {
+            display: block;
+        }
+        .rating-stars {
+            color: #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header will be loaded dynamically -->
+    <div id="header-placeholder"></div>
+
+    <main class="container py-4">
+        <div class="tool-container">
+            <div class="tool-header text-center mb-4">
+                <h1><i class="bi bi-code-square"></i> Schema Markup Generator</h1>
+                <p class="lead">Generate structured data markup for enhanced search results</p>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="calc-card p-4">
+                        <!-- Generator Form -->
+                        <form id="schemaForm" onsubmit="return false;">
+                            <!-- Schema Type Selection -->
+                            <div class="mb-4">
+                                <label class="form-label">Schema Type</label>
+                                <select class="form-select" id="schemaType" onchange="showSchemaFields()">
+                                    <option value="">Select a schema type</option>
+                                    <option value="Article">Article</option>
+                                    <option value="Product">Product</option>
+                                    <option value="LocalBusiness">Local Business</option>
+                                    <option value="Recipe">Recipe</option>
+                                    <option value="Event">Event</option>
+                                </select>
+                            </div>
+
+                            <!-- Article Schema Fields -->
+                            <div id="ArticleFields" class="schema-fields">
+                                <div class="mb-3">
+                                    <label class="form-label">Headline</label>
+                                    <input type="text" class="form-control" name="headline">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Author</label>
+                                    <input type="text" class="form-control" name="author">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Date Published</label>
+                                    <input type="date" class="form-control" name="datePublished">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Image URL</label>
+                                    <input type="url" class="form-control" name="image">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Description</label>
+                                    <textarea class="form-control" name="description" rows="3"></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Product Schema Fields -->
+                            <div id="ProductFields" class="schema-fields">
+                                <div class="mb-3">
+                                    <label class="form-label">Product Name</label>
+                                    <input type="text" class="form-control" name="name">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Description</label>
+                                    <textarea class="form-control" name="description" rows="3"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Price</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="number" class="form-control" name="price" step="0.01">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Currency</label>
+                                    <input type="text" class="form-control" name="priceCurrency" value="USD">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Rating (1-5)</label>
+                                    <input type="number" class="form-control" name="ratingValue" min="1" max="5" step="0.1">
+                                </div>
+                            </div>
+
+                            <!-- Local Business Schema Fields -->
+                            <div id="LocalBusinessFields" class="schema-fields">
+                                <div class="mb-3">
+                                    <label class="form-label">Business Name</label>
+                                    <input type="text" class="form-control" name="name">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Description</label>
+                                    <textarea class="form-control" name="description" rows="3"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Address</label>
+                                    <input type="text" class="form-control" name="address">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Phone</label>
+                                    <input type="tel" class="form-control" name="telephone">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Opening Hours</label>
+                                    <input type="text" class="form-control" name="openingHours" placeholder="Mo-Fr 09:00-17:00">
+                                </div>
+                            </div>
+
+                            <button class="btn btn-success" onclick="generateSchema()">Generate Schema</button>
+                        </form>
+
+                        <!-- Results Section -->
+                        <div id="resultSection" class="result-box d-none">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4 class="mb-0">Generated Schema Markup</h4>
+                                <button class="btn btn-primary" onclick="copyToClipboard()">
+                                    <i class="bi bi-clipboard"></i> Copy
+                                </button>
+                            </div>
+                            <pre id="schemaOutput"></pre>
+
+                            <!-- Rich Snippet Preview -->
+                            <div class="mt-4">
+                                <h4 class="mb-3">Rich Snippet Preview</h4>
+                                <div class="rich-snippet" id="snippetPreview"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <!-- Schema Information -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h4 class="card-title">About Schema Markup</h4>
+                            <p>Schema markup helps search engines understand your content better, potentially leading to rich snippets in search results.</p>
+                            <div class="alert alert-info">
+                                <small>Note: Implementation of rich snippets by search engines is not guaranteed.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Implementation Guide -->
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Implementation Guide</h4>
+                            <ol class="mb-0">
+                                <li>Copy the generated JSON-LD code</li>
+                                <li>Place it in the <code>&lt;head&gt;</code> section</li>
+                                <li>Test using Google's Rich Results Test</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded dynamically -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/main.js"></script>
+    <script>
+        // Show relevant schema fields based on selection
+        function showSchemaFields() {
+            const schemaType = document.getElementById('schemaType').value;
+            document.querySelectorAll('.schema-fields').forEach(field => {
+                field.classList.remove('active');
+            });
+            if (schemaType) {
+                document.getElementById(schemaType + 'Fields').classList.add('active');
+            }
+        }
+
+        // Generate schema markup
+        function generateSchema() {
+            const schemaType = document.getElementById('schemaType').value;
+            if (!schemaType) return;
+
+            const fields = document.getElementById(schemaType + 'Fields');
+            const schema = {
+                "@context": "https://schema.org",
+                "@type": schemaType
+            };
+
+            // Collect field values
+            fields.querySelectorAll('input, textarea').forEach(input => {
+                if (input.value) {
+                    if (input.name === 'price') {
+                        schema[input.name] = parseFloat(input.value);
+                    } else if (input.name === 'ratingValue') {
+                        schema.aggregateRating = {
+                            "@type": "AggregateRating",
+                            "ratingValue": parseFloat(input.value),
+                            "reviewCount": "100"
+                        };
+                    } else {
+                        schema[input.name] = input.value;
+                    }
+                }
+            });
+
+            // Display results
+            document.getElementById('resultSection').classList.remove('d-none');
+            document.getElementById('schemaOutput').textContent = 
+                '<script type="application/ld+json">\n' +
+                JSON.stringify(schema, null, 2) +
+                '\n<\/script>';
+
+            // Update rich snippet preview
+            updateSnippetPreview(schema);
+        }
+
+        // Update rich snippet preview
+        function updateSnippetPreview(schema) {
+            let preview = '';
+            
+            switch(schema['@type']) {
+                case 'Article':
+                    preview = `
+                        <div class="mb-2">${schema.headline || 'Article Title'}</div>
+                        <div class="text-success mb-1" style="font-size: 0.9rem;">
+                            By ${schema.author || 'Author'} • ${schema.datePublished || 'Date'}
+                        </div>
+                        <div style="font-size: 0.9rem; color: #545454;">
+                            ${schema.description || 'Article description...'}
+                        </div>
+                    `;
+                    break;
+                
+                case 'Product':
+                    const rating = schema.aggregateRating ? schema.aggregateRating.ratingValue : 0;
+                    preview = `
+                        <div class="mb-2">${schema.name || 'Product Name'}</div>
+                        <div class="rating-stars mb-1">
+                            ${'★'.repeat(Math.floor(rating))}${'☆'.repeat(5-Math.floor(rating))}
+                            <span class="text-muted">(100 reviews)</span>
+                        </div>
+                        <div class="text-success mb-1">$${schema.price || '0.00'} ${schema.priceCurrency || 'USD'}</div>
+                        <div style="font-size: 0.9rem; color: #545454;">
+                            ${schema.description || 'Product description...'}
+                        </div>
+                    `;
+                    break;
+                
+                case 'LocalBusiness':
+                    preview = `
+                        <div class="mb-2">${schema.name || 'Business Name'}</div>
+                        <div class="text-success mb-1" style="font-size: 0.9rem;">
+                            ${schema.address || 'Address'} • ${schema.telephone || 'Phone'}
+                        </div>
+                        <div style="font-size: 0.9rem; color: #545454;">
+                            Hours: ${schema.openingHours || 'Opening hours...'}
+                        </div>
+                    `;
+                    break;
+            }
+            
+            document.getElementById('snippetPreview').innerHTML = preview;
+        }
+
+        // Copy to clipboard function
+        function copyToClipboard() {
+            const output = document.getElementById('schemaOutput');
+            navigator.clipboard.writeText(output.textContent)
+                .then(() => alert('Schema markup copied to clipboard!'))
+                .catch(err => console.error('Failed to copy text: ', err));
+        }
+    </script>
+</body>
+</html> 

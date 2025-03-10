@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Calculator - Free Online Calculator</title>
+    <meta name="description" content="Free online scientific calculator with advanced mathematical functions including trigonometry, logarithms, exponentials, and more.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .calculator {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        .calc-display {
+            background: #fff;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+        }
+        .calc-history {
+            font-size: 0.9rem;
+            color: #6c757d;
+            min-height: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .calc-result {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: right;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .calc-btn {
+            width: 100%;
+            padding: 0.75rem;
+            margin: 0.25rem 0;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+        }
+        .calc-btn:hover {
+            transform: translateY(-2px);
+        }
+        .btn-number {
+            background: #fff;
+        }
+        .btn-operator {
+            background: #e9ecef;
+        }
+        .btn-function {
+            background: #cfe2ff;
+        }
+        .btn-memory {
+            background: #d1e7dd;
+        }
+        .btn-equals {
+            background: #0d6efd;
+            color: white;
+        }
+        .btn-clear {
+            background: #dc3545;
+            color: white;
+        }
+        .calc-memory-indicator {
+            position: absolute;
+            top: 0.5rem;
+            left: 0.5rem;
+            font-size: 0.8rem;
+            color: #198754;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header will be loaded dynamically -->
+    <div id="header-placeholder"></div>
+
+    <main class="container py-4">
+        <div class="tool-container">
+            <div class="tool-header text-center mb-4">
+                <h1><i class="bi bi-calculator-fill"></i> Scientific Calculator</h1>
+                <p class="lead">Advanced calculator with scientific and trigonometric functions</p>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="calculator p-3">
+                        <!-- Display -->
+                        <div class="calc-display position-relative">
+                            <div id="memoryIndicator" class="calc-memory-indicator d-none">M</div>
+                            <div id="calcHistory" class="calc-history"></div>
+                            <div id="calcResult" class="calc-result">0</div>
+                        </div>
+
+                        <!-- Scientific Functions -->
+                        <div class="row g-2 mb-2">
+                            <div class="col-3"><button class="calc-btn btn-function" onclick="calculate('sin')">sin</button></div>
+                            <div class="col-3"><button class="calc-btn btn-function" onclick="calculate('cos')">cos</button></div>
+                            <div class="col-3"><button class="calc-btn btn-function" onclick="calculate('tan')">tan</button></div>
+                            <div class="col-3"><button class="calc-btn btn-function" onclick="calculate('pi')">π</button></div>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-3"><button class="calc-btn btn-function" onclick="calculate('log')">log</button></div>
+                            <div class="col-3"><button class="calc-btn btn-function" onclick="calculate('ln')">ln</button></div>
+                            <div class="col-3"><button class="calc-btn btn-function" onclick="calculate('sqrt')">√</button></div>
+                            <div class="col-3"><button class="calc-btn btn-function" onclick="calculate('e')">e</button></div>
+                        </div>
+
+                        <!-- Memory Functions -->
+                        <div class="row g-2 mb-2">
+                            <div class="col-3"><button class="calc-btn btn-memory" onclick="memoryStore()">MS</button></div>
+                            <div class="col-3"><button class="calc-btn btn-memory" onclick="memoryRecall()">MR</button></div>
+                            <div class="col-3"><button class="calc-btn btn-memory" onclick="memoryAdd()">M+</button></div>
+                            <div class="col-3"><button class="calc-btn btn-memory" onclick="memoryClear()">MC</button></div>
+                        </div>
+
+                        <!-- Numbers and Basic Operations -->
+                        <div class="row g-2">
+                            <div class="col-9">
+                                <div class="row g-2 mb-2">
+                                    <div class="col-4"><button class="calc-btn btn-number" onclick="appendNumber('7')">7</button></div>
+                                    <div class="col-4"><button class="calc-btn btn-number" onclick="appendNumber('8')">8</button></div>
+                                    <div class="col-4"><button class="calc-btn btn-number" onclick="appendNumber('9')">9</button></div>
+                                </div>
+                                <div class="row g-2 mb-2">
+                                    <div class="col-4"><button class="calc-btn btn-number" onclick="appendNumber('4')">4</button></div>
+                                    <div class="col-4"><button class="calc-btn btn-number" onclick="appendNumber('5')">5</button></div>
+                                    <div class="col-4"><button class="calc-btn btn-number" onclick="appendNumber('6')">6</button></div>
+                                </div>
+                                <div class="row g-2 mb-2">
+                                    <div class="col-4"><button class="calc-btn btn-number" onclick="appendNumber('1')">1</button></div>
+                                    <div class="col-4"><button class="calc-btn btn-number" onclick="appendNumber('2')">2</button></div>
+                                    <div class="col-4"><button class="calc-btn btn-number" onclick="appendNumber('3')">3</button></div>
+                                </div>
+                                <div class="row g-2">
+                                    <div class="col-4"><button class="calc-btn btn-number" onclick="appendNumber('0')">0</button></div>
+                                    <div class="col-4"><button class="calc-btn btn-number" onclick="appendNumber('.')">.</button></div>
+                                    <div class="col-4"><button class="calc-btn btn-operator" onclick="toggleSign()">±</button></div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <button class="calc-btn btn-clear mb-2" onclick="clearAll()">C</button>
+                                <button class="calc-btn btn-operator mb-2" onclick="calculate('backspace')">⌫</button>
+                                <button class="calc-btn btn-equals" onclick="calculateResult()" style="height: 108px">＝</button>
+                            </div>
+                        </div>
+
+                        <!-- Operators -->
+                        <div class="row g-2 mt-2">
+                            <div class="col-3"><button class="calc-btn btn-operator" onclick="calculate('+')">+</button></div>
+                            <div class="col-3"><button class="calc-btn btn-operator" onclick="calculate('-')">−</button></div>
+                            <div class="col-3"><button class="calc-btn btn-operator" onclick="calculate('*')">×</button></div>
+                            <div class="col-3"><button class="calc-btn btn-operator" onclick="calculate('/')">÷</button></div>
+                        </div>
+                        <div class="row g-2 mt-2">
+                            <div class="col-3"><button class="calc-btn btn-operator" onclick="calculate('pow')">xʸ</button></div>
+                            <div class="col-3"><button class="calc-btn btn-operator" onclick="calculate('exp')">EXP</button></div>
+                            <div class="col-3"><button class="calc-btn btn-operator" onclick="calculate('(')">(</button></div>
+                            <div class="col-3"><button class="calc-btn btn-operator" onclick="calculate(')')">)</button></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <!-- Calculator Info -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h4 class="card-title">Features</h4>
+                            <ul class="list-unstyled">
+                                <li><i class="bi bi-check-circle-fill text-success"></i> Basic arithmetic operations</li>
+                                <li><i class="bi bi-check-circle-fill text-success"></i> Trigonometric functions</li>
+                                <li><i class="bi bi-check-circle-fill text-success"></i> Logarithmic functions</li>
+                                <li><i class="bi bi-check-circle-fill text-success"></i> Memory functions</li>
+                                <li><i class="bi bi-check-circle-fill text-success"></i> Constants (π, e)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Keyboard Shortcuts -->
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Keyboard Shortcuts</h4>
+                            <ul class="list-unstyled">
+                                <li><code>0-9</code> - Numbers</li>
+                                <li><code>+, -, *, /</code> - Basic operations</li>
+                                <li><code>Enter</code> - Calculate result</li>
+                                <li><code>Backspace</code> - Delete last character</li>
+                                <li><code>Esc</code> - Clear all</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded dynamically -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/main.js"></script>
+    <script>
+        let currentExpression = '';
+        let lastResult = '0';
+        let memory = 0;
+        let isNewCalculation = true;
+
+        function updateDisplay() {
+            document.getElementById('calcResult').textContent = currentExpression || '0';
+        }
+
+        function appendNumber(num) {
+            if (isNewCalculation) {
+                currentExpression = '';
+                isNewCalculation = false;
+            }
+            currentExpression += num;
+            updateDisplay();
+        }
+
+        function calculate(operation) {
+            if (isNewCalculation) {
+                currentExpression = lastResult;
+                isNewCalculation = false;
+            }
+
+            switch(operation) {
+                case '+':
+                case '-':
+                case '*':
+                case '/':
+                    currentExpression += ` ${operation} `;
+                    break;
+                case 'sin':
+                case 'cos':
+                case 'tan':
+                case 'log':
+                case 'ln':
+                case 'sqrt':
+                    currentExpression = `${operation}(${currentExpression})`;
+                    calculateResult();
+                    break;
+                case 'pow':
+                    currentExpression += ' ^ ';
+                    break;
+                case 'pi':
+                    currentExpression += Math.PI;
+                    break;
+                case 'e':
+                    currentExpression += Math.E;
+                    break;
+                case 'backspace':
+                    currentExpression = currentExpression.slice(0, -1);
+                    break;
+            }
+            updateDisplay();
+        }
+
+        function calculateResult() {
+            try {
+                // Replace mathematical expressions with JavaScript equivalents
+                let expression = currentExpression
+                    .replace(/sin/g, 'Math.sin')
+                    .replace(/cos/g, 'Math.cos')
+                    .replace(/tan/g, 'Math.tan')
+                    .replace(/log/g, 'Math.log10')
+                    .replace(/ln/g, 'Math.log')
+                    .replace(/sqrt/g, 'Math.sqrt')
+                    .replace(/\^/g, '**');
+
+                let result = eval(expression);
+                
+                // Format the result
+                if (Math.abs(result) < 1e-10) result = 0;
+                result = parseFloat(result.toPrecision(10));
+                
+                document.getElementById('calcHistory').textContent = currentExpression + ' =';
+                currentExpression = result.toString();
+                lastResult = currentExpression;
+                isNewCalculation = true;
+                updateDisplay();
+            } catch (error) {
+                currentExpression = 'Error';
+                updateDisplay();
+                setTimeout(() => {
+                    currentExpression = lastResult;
+                    updateDisplay();
+                }, 1000);
+            }
+        }
+
+        function clearAll() {
+            currentExpression = '';
+            lastResult = '0';
+            document.getElementById('calcHistory').textContent = '';
+            isNewCalculation = true;
+            updateDisplay();
+        }
+
+        function toggleSign() {
+            if (currentExpression.startsWith('-')) {
+                currentExpression = currentExpression.slice(1);
+            } else {
+                currentExpression = '-' + currentExpression;
+            }
+            updateDisplay();
+        }
+
+        // Memory functions
+        function memoryStore() {
+            try {
+                memory = parseFloat(eval(currentExpression));
+                document.getElementById('memoryIndicator').classList.remove('d-none');
+            } catch (error) {
+                // Handle error
+            }
+        }
+
+        function memoryRecall() {
+            if (memory !== null) {
+                currentExpression = memory.toString();
+                updateDisplay();
+            }
+        }
+
+        function memoryAdd() {
+            try {
+                memory += parseFloat(eval(currentExpression));
+                document.getElementById('memoryIndicator').classList.remove('d-none');
+            } catch (error) {
+                // Handle error
+            }
+        }
+
+        function memoryClear() {
+            memory = 0;
+            document.getElementById('memoryIndicator').classList.add('d-none');
+        }
+
+        // Keyboard support
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            if (/[0-9.]/.test(key)) {
+                appendNumber(key);
+            } else if (['+', '-', '*', '/'].includes(key)) {
+                calculate(key);
+            } else if (key === 'Enter') {
+                calculateResult();
+            } else if (key === 'Escape') {
+                clearAll();
+            } else if (key === 'Backspace') {
+                calculate('backspace');
+            }
+        });
+    </script>
+</body>
+</html> 

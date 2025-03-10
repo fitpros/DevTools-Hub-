@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Content Detector & Humanizer - DevTools Hub</title>
+    <meta name="description" content="Detect AI-generated content and convert it into natural human-like text. Free online tool for content writers and SEO professionals.">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../css/style.css" rel="stylesheet">
+    <style>
+        .score-indicator {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            background: conic-gradient(from 0deg, #4CAF50 0%, #4CAF50 var(--percentage), #f5f5f5 var(--percentage), #f5f5f5 100%);
+            position: relative;
+        }
+        
+        .score-inner {
+            width: 130px;
+            height: 130px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .features-list i {
+            color: #4CAF50;
+        }
+
+        .text-stats {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        #contentInput {
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        .suggestion-card {
+            border-left: 4px solid #4CAF50;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .loading .loading-overlay {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header will be loaded here -->
+    <div id="header-placeholder"></div>
+
+    <!-- Main Content -->
+    <main class="container py-5">
+        <div class="tool-container position-relative">
+            <!-- Loading Overlay -->
+            <div class="loading-overlay">
+                <div class="text-center">
+                    <div class="spinner-border text-primary mb-2" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <div>Analyzing content...</div>
+                </div>
+            </div>
+
+            <div class="tool-header text-center">
+                <h1 class="display-5 mb-3">AI Content Detector & Humanizer</h1>
+                <p class="lead text-muted">Detect AI-generated content and transform it into natural human-like text</p>
+            </div>
+
+            <!-- Tool Content -->
+            <div class="tool-content mt-5">
+                <div class="row">
+                    <!-- Input Section -->
+                    <div class="col-lg-8">
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <h2 class="h5 mb-3">Check Your Content</h2>
+                                <div class="mb-3">
+                                    <textarea id="contentInput" class="form-control" placeholder="Paste your content here (minimum 100 characters)"></textarea>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="text-stats">
+                                        Characters: <span id="charCount">0</span> | Words: <span id="wordCount">0</span>
+                                    </div>
+                                    <button id="analyzeBtn" class="btn btn-primary px-4">
+                                        <i class="bi bi-search me-2"></i>Analyze Content
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Results Section -->
+                        <div id="resultsSection" class="card" style="display: none;">
+                            <div class="card-body">
+                                <h3 class="h5 mb-4">Analysis Results</h3>
+                                
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <div class="score-indicator" style="--percentage: 0%">
+                                            <div class="score-inner">
+                                                <div class="h3 mb-0" id="aiScore">0%</div>
+                                                <div class="small text-muted">AI Probability</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h4 class="h6 mb-3">Content Analysis:</h4>
+                                        <ul class="list-unstyled mb-0">
+                                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> <span id="naturalityScore">Natural language patterns</span></li>
+                                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> <span id="consistencyScore">Writing style consistency</span></li>
+                                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> <span id="varietyScore">Vocabulary variety</span></li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <!-- Humanizer Section -->
+                                <div class="mt-4">
+                                    <h4 class="h5 mb-3">Humanize Your Content</h4>
+                                    <div class="suggestion-card p-3 bg-light rounded mb-3">
+                                        <div class="d-flex align-items-start">
+                                            <i class="bi bi-lightbulb-fill text-warning me-2"></i>
+                                            <div>
+                                                <h5 class="h6 mb-2">Suggestions to Make Your Content More Human-like:</h5>
+                                                <ul class="mb-0" id="suggestions">
+                                                    <li>Add personal experiences or anecdotes</li>
+                                                    <li>Vary sentence structure and length</li>
+                                                    <li>Include conversational transitions</li>
+                                                    <li>Use more natural language patterns</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button id="humanizeBtn" class="btn btn-success">
+                                        <i class="bi bi-magic me-2"></i>Humanize Content
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Features Section -->
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="h5 mb-4">Features</h3>
+                                <ul class="features-list list-unstyled mb-0">
+                                    <li class="mb-3">
+                                        <i class="bi bi-shield-check me-2"></i>
+                                        <strong>AI Detection</strong>
+                                        <p class="text-muted small mb-0">Advanced algorithms to detect AI-generated content</p>
+                                    </li>
+                                    <li class="mb-3">
+                                        <i class="bi bi-arrow-repeat me-2"></i>
+                                        <strong>Content Humanizer</strong>
+                                        <p class="text-muted small mb-0">Transform AI text into natural human-like content</p>
+                                    </li>
+                                    <li class="mb-3">
+                                        <i class="bi bi-graph-up me-2"></i>
+                                        <strong>Detailed Analysis</strong>
+                                        <p class="text-muted small mb-0">Get insights into content patterns and style</p>
+                                    </li>
+                                    <li class="mb-3">
+                                        <i class="bi bi-lightbulb me-2"></i>
+                                        <strong>Smart Suggestions</strong>
+                                        <p class="text-muted small mb-0">Receive tips to improve content authenticity</p>
+                                    </li>
+                                    <li>
+                                        <i class="bi bi-clock-history me-2"></i>
+                                        <strong>Real-time Processing</strong>
+                                        <p class="text-muted small mb-0">Instant analysis and transformation</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded here -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const contentInput = document.getElementById('contentInput');
+            const charCount = document.getElementById('charCount');
+            const wordCount = document.getElementById('wordCount');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const humanizeBtn = document.getElementById('humanizeBtn');
+            const resultsSection = document.getElementById('resultsSection');
+            const toolContainer = document.querySelector('.tool-container');
+            const aiScore = document.getElementById('aiScore');
+            const scoreIndicator = document.querySelector('.score-indicator');
+
+            // Update character and word count
+            contentInput.addEventListener('input', function() {
+                const text = this.value;
+                charCount.textContent = text.length;
+                wordCount.textContent = text.trim().split(/\s+/).filter(Boolean).length;
+            });
+
+            // Analyze content
+            analyzeBtn.addEventListener('click', function() {
+                const text = contentInput.value.trim();
+                if (text.length < 100) {
+                    alert('Please enter at least 100 characters');
+                    return;
+                }
+
+                // Show loading state
+                toolContainer.classList.add('loading');
+
+                // Analyze text patterns
+                setTimeout(() => {
+                    const patterns = analyzeTextPatterns(text);
+                    const score = calculateAIScore(patterns);
+                    
+                    // Update UI
+                    aiScore.textContent = score + '%';
+                    scoreIndicator.style.setProperty('--percentage', score + '%');
+                    
+                    // Update analysis scores
+                    document.getElementById('naturalityScore').textContent = 
+                        `Natural language patterns: ${patterns.naturalness}%`;
+                    document.getElementById('consistencyScore').textContent = 
+                        `Writing style consistency: ${patterns.consistency}%`;
+                    document.getElementById('varietyScore').textContent = 
+                        `Vocabulary variety: ${patterns.variety}%`;
+
+                    // Update suggestions based on analysis
+                    updateSuggestions(patterns);
+                    
+                    // Show results
+                    resultsSection.style.display = 'block';
+                    toolContainer.classList.remove('loading');
+                    
+                    // Scroll to results
+                    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 1500);
+            });
+
+            // Humanize content
+            humanizeBtn.addEventListener('click', function() {
+                // Show loading state
+                toolContainer.classList.add('loading');
+
+                // Get the text to humanize
+                const text = contentInput.value;
+
+                // Process the text
+                setTimeout(() => {
+                    const humanizedText = humanizeContent(text);
+                    contentInput.value = humanizedText;
+                    toolContainer.classList.remove('loading');
+                    
+                    // Update counts
+                    charCount.textContent = humanizedText.length;
+                    wordCount.textContent = humanizedText.trim().split(/\s+/).filter(Boolean).length;
+
+                    // Trigger reanalysis
+                    analyzeBtn.click();
+                }, 2000);
+            });
+
+            // Function to analyze text patterns
+            function analyzeTextPatterns(text) {
+                // Calculate sentence lengths and variety
+                const sentences = text.split(/[.!?]+/).filter(Boolean);
+                const avgSentenceLength = sentences.reduce((sum, s) => sum + s.length, 0) / sentences.length;
+                const sentenceLengthVariety = sentences.reduce((variance, s) => 
+                    variance + Math.pow(s.length - avgSentenceLength, 2), 0) / sentences.length;
+                
+                // Calculate word variety and complexity
+                const words = text.toLowerCase().split(/\s+/);
+                const uniqueWords = new Set(words);
+                const varietyScore = (uniqueWords.size / words.length) * 100;
+                
+                // Calculate average word length (complexity indicator)
+                const avgWordLength = words.reduce((sum, word) => sum + word.length, 0) / words.length;
+
+                // Check for common AI patterns
+                const aiPatterns = [
+                    /\b(therefore|thus|hence)\b/gi,
+                    /\b(utilize|utilization)\b/gi,
+                    /\b(implement|implementation)\b/gi,
+                    /\b(furthermore|moreover)\b/gi,
+                    /\b(subsequently|consequently)\b/gi,
+                    /\b(additionally|moreover)\b/gi,
+                    /\b(pursuant to|in accordance with)\b/gi,
+                    /\b(demonstrate|exemplify)\b/gi,
+                    /\b(necessitate|mandate)\b/gi,
+                    /\b(optimal|optimize|optimization)\b/gi,
+                    /\b(facilitate|expedite)\b/gi,
+                    /\b(leverage|harness)\b/gi,
+                    /\b(paradigm|framework)\b/gi,
+                    /\b(methodology|approach)\b/gi,
+                    /\b(aforementioned|preceding)\b/gi
+                ];
+                
+                // Check for repetitive phrase patterns
+                const phrasePatterns = text.match(/\b\w+\s+\w+\b/g) || [];
+                const phraseCounts = {};
+                phrasePatterns.forEach(phrase => {
+                    phraseCounts[phrase] = (phraseCounts[phrase] || 0) + 1;
+                });
+                const repetitivePhrasesCount = Object.values(phraseCounts).filter(count => count > 2).length;
+
+                // Calculate emotional language score
+                const emotionalWords = [
+                    /\b(love|hate|feel|think|believe)\b/gi,
+                    /\b(amazing|awesome|great|terrible|awful)\b/gi,
+                    /\b(happy|sad|excited|worried|concerned)\b/gi,
+                    /\b(honestly|frankly|personally|actually)\b/gi
+                ];
+                const emotionalScore = emotionalWords.reduce((score, pattern) => {
+                    return score + (text.match(pattern) || []).length;
+                }, 0) * 5;
+
+                const aiPatternCount = aiPatterns.reduce((count, pattern) => {
+                    return count + (text.match(pattern) || []).length;
+                }, 0);
+
+                // Calculate transition words usage
+                const transitionWords = [
+                    /\b(however|nevertheless|although)\b/gi,
+                    /\b(because|since|as)\b/gi,
+                    /\b(also|additionally|moreover)\b/gi,
+                    /\b(for example|such as|like)\b/gi
+                ];
+                const transitionScore = transitionWords.reduce((score, pattern) => {
+                    return score + (text.match(pattern) || []).length;
+                }, 0) * 5;
+
+                return {
+                    naturalness: Math.max(0, 100 - (aiPatternCount * 5) + (emotionalScore / 2)),
+                    consistency: Math.min(100, Math.max(0, 100 - Math.abs(avgSentenceLength - 15) * 2 - (repetitivePhrasesCount * 5))),
+                    variety: Math.min(100, varietyScore + (transitionScore / 2)),
+                    metrics: {
+                        avgSentenceLength,
+                        sentenceLengthVariety,
+                        avgWordLength,
+                        uniqueWordPercentage: varietyScore,
+                        emotionalLanguageScore: emotionalScore,
+                        formalPhraseCount: aiPatternCount,
+                        transitionWordsScore: transitionScore
+                    }
+                };
+            }
+
+            // Function to calculate AI probability score
+            function calculateAIScore(patterns) {
+                const weights = {
+                    naturalness: 0.4,
+                    consistency: 0.3,
+                    variety: 0.3
+                };
+
+                return Math.round(
+                    (100 - patterns.naturalness) * weights.naturalness +
+                    (100 - patterns.consistency) * weights.consistency +
+                    (100 - patterns.variety) * weights.variety
+                );
+            }
+
+            // Function to update suggestions based on analysis
+            function updateSuggestions(patterns) {
+                const suggestions = document.getElementById('suggestions');
+                const suggestionsList = [];
+                const metrics = patterns.metrics;
+
+                // Naturalness suggestions
+                if (patterns.naturalness < 70) {
+                    if (metrics.emotionalLanguageScore < 20) {
+                        suggestionsList.push(
+                            "Add more emotional and personal language",
+                            "Share your thoughts and feelings about the topic",
+                            "Include personal experiences or stories"
+                        );
+                    }
+                    if (metrics.formalPhraseCount > 5) {
+                        suggestionsList.push(
+                            "Replace formal academic phrases with conversational alternatives",
+                            "Use contractions (e.g., 'it's' instead of 'it is')",
+                            "Write like you're explaining to a friend"
+                        );
+                    }
+                }
+
+                // Consistency suggestions
+                if (patterns.consistency < 70) {
+                    if (metrics.avgSentenceLength > 25) {
+                        suggestionsList.push(
+                            "Break down longer sentences into shorter ones",
+                            "Aim for an average sentence length of 15-20 words",
+                            "Mix short and long sentences for better rhythm"
+                        );
+                    }
+                    if (metrics.sentenceLengthVariety < 10) {
+                        suggestionsList.push(
+                            "Vary your sentence structure more",
+                            "Combine short and long sentences",
+                            "Use different sentence types (questions, statements, exclamations)"
+                        );
+                    }
+                }
+
+                // Variety suggestions
+                if (patterns.variety < 70) {
+                    if (metrics.uniqueWordPercentage < 60) {
+                        suggestionsList.push(
+                            "Use more diverse vocabulary",
+                            "Replace repeated words with synonyms",
+                            "Add descriptive adjectives and adverbs"
+                        );
+                    }
+                    if (metrics.transitionWordsScore < 15) {
+                        suggestionsList.push(
+                            "Add more transition words to connect ideas",
+                            "Use natural connecting phrases",
+                            "Include conversational transitions"
+                        );
+                    }
+                }
+
+                suggestions.innerHTML = suggestionsList
+                    .map(s => `<li>${s}</li>`)
+                    .join('');
+            }
+
+            // Function to humanize content
+            function humanizeContent(text) {
+                // Replace formal/academic phrases with conversational alternatives
+                const replacements = {
+                    'therefore': ['so', 'that\'s why', 'because of this', 'which means'],
+                    'furthermore': ['also', 'plus', 'what\'s more', 'on top of that'],
+                    'utilize': ['use', 'work with', 'try', 'go with'],
+                    'implement': ['do', 'set up', 'put in place', 'get going with'],
+                    'subsequently': ['then', 'after that', 'next', 'following that'],
+                    'consequently': ['as a result', 'because of that', 'so', 'which led to'],
+                    'additionally': ['also', 'plus', 'on top of that', 'another thing is'],
+                    'numerous': ['many', 'lots of', 'plenty of', 'quite a few'],
+                    'optimal': ['best', 'ideal', 'perfect', 'just right'],
+                    'facilitate': ['help', 'make easier', 'support', 'smooth the way for'],
+                    'endeavor': ['try', 'work', 'aim', 'give it a shot'],
+                    'commence': ['start', 'begin', 'kick off', 'get started'],
+                    'terminate': ['end', 'stop', 'finish', 'wrap up'],
+                    'sufficient': ['enough', 'plenty', 'adequate', 'good enough'],
+                    'demonstrate': ['show', 'prove', 'make clear', 'point out'],
+                    'necessitate': ['need', 'require', 'call for', 'make necessary'],
+                    'paradigm': ['model', 'example', 'pattern', 'way of doing things'],
+                    'methodology': ['method', 'approach', 'way', 'technique'],
+                    'leverage': ['use', 'make the most of', 'benefit from', 'take advantage of'],
+                    'pursuant to': ['following', 'according to', 'based on', 'in line with'],
+                    'in accordance with': ['following', 'based on', 'as per', 'in line with'],
+                    'exemplify': ['show', 'demonstrate', 'illustrate', 'be an example of'],
+                    'harness': ['use', 'make use of', 'put to work', 'tap into']
+                };
+
+                // Replace formal words with more casual alternatives
+                let humanized = text;
+                for (const [formal, alternatives] of Object.entries(replacements)) {
+                    const regex = new RegExp(`\\b${formal}\\b`, 'gi');
+                    humanized = humanized.replace(regex, () => 
+                        alternatives[Math.floor(Math.random() * alternatives.length)]
+                    );
+                }
+
+                // Add contractions
+                const contractions = {
+                    'it is': 'it\'s',
+                    'that is': 'that\'s',
+                    'there is': 'there\'s',
+                    'what is': 'what\'s',
+                    'who is': 'who\'s',
+                    'how is': 'how\'s',
+                    'cannot': 'can\'t',
+                    'do not': 'don\'t',
+                    'does not': 'doesn\'t',
+                    'did not': 'didn\'t',
+                    'has not': 'hasn\'t',
+                    'have not': 'haven\'t',
+                    'would not': 'wouldn\'t',
+                    'could not': 'couldn\'t',
+                    'should not': 'shouldn\'t',
+                    'will not': 'won\'t',
+                    'they are': 'they\'re',
+                    'we are': 'we\'re',
+                    'you are': 'you\'re',
+                    'i am': 'I\'m'
+                };
+
+                for (const [full, contraction] of Object.entries(contractions)) {
+                    const regex = new RegExp(`\\b${full}\\b`, 'gi');
+                    humanized = humanized.replace(regex, contraction);
+                }
+
+                // Add personal touch phrases randomly
+                const personalTouches = [
+                    "\n\nFrom my experience, this approach works really well!",
+                    "\n\nI've found this to be particularly effective in my projects.",
+                    "\n\nHonestly, this is one of my favorite solutions.",
+                    "\n\nIn my opinion, this is the best way to handle it.",
+                    "\n\nTrust me, I've tried many different approaches, and this one stands out.",
+                    "\n\nBased on my personal experience, you can't go wrong with this method.",
+                    "\n\nI remember when I first tried this - it was a game-changer!",
+                    "\n\nThis might sound surprising, but it's worked wonders for me.",
+                    "\n\nI've been using this approach for years, and it never fails to deliver.",
+                    "\n\nLet me tell you why I'm so excited about this solution..."
+                ];
+
+                // Add a random personal touch
+                humanized += personalTouches[Math.floor(Math.random() * personalTouches.length)];
+
+                // Add conversational transitions
+                const transitions = [
+                    '. ', 
+                    '. Actually, ', 
+                    '. You see, ', 
+                    '. Interestingly, ',
+                    '. Here\'s the thing: ',
+                    '. Believe it or not, ',
+                    '. I should mention that ',
+                    '. The cool part is, ',
+                    '. What\'s really interesting is, ',
+                    '. You know what? '
+                ];
+
+                humanized = humanized.replace(/\. /g, () => 
+                    transitions[Math.floor(Math.random() * transitions.length)]
+                );
+
+                // Add rhetorical questions
+                if (humanized.length > 300) {
+                    const questions = [
+                        "\n\nSounds good, right?",
+                        "\n\nWhat do you think about that?",
+                        "\n\nIsn't that interesting?",
+                        "\n\nCan you see why this matters?",
+                        "\n\nWhy is this important?"
+                    ];
+                    humanized += questions[Math.floor(Math.random() * questions.length)];
+                }
+
+                return humanized;
+            }
+        });
+    </script>
+</body>
+</html> 

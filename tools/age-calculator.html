@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Calculator - Calculate Your Exact Age</title>
+    <meta name="description" content="Calculate your exact age in years, months, weeks, and days. Find time between any two dates with our precise age calculator.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .calc-card {
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        .result-box {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        .age-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 1rem 0;
+            color: #198754;
+        }
+        .time-unit {
+            border-left: 4px solid #198754;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background: #fff;
+            border-radius: 4px;
+        }
+        .time-unit-value {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #198754;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header will be loaded dynamically -->
+    <div id="header-placeholder"></div>
+
+    <main class="container py-4">
+        <div class="tool-container">
+            <div class="tool-header text-center mb-4">
+                <h1><i class="bi bi-calendar-date"></i> Age Calculator</h1>
+                <p class="lead">Calculate your exact age or time between any two dates</p>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="calc-card p-4">
+                        <!-- Calculator Form -->
+                        <form id="ageForm" onsubmit="return false;">
+                            <div class="row">
+                                <!-- Birth Date / Start Date -->
+                                <div class="col-sm-6 mb-3">
+                                    <label class="form-label">Birth Date / Start Date</label>
+                                    <input type="date" class="form-control" id="startDate" required>
+                                </div>
+
+                                <!-- End Date -->
+                                <div class="col-sm-6 mb-3">
+                                    <label class="form-label">Current Date / End Date</label>
+                                    <input type="date" class="form-control" id="endDate" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <button class="btn btn-success" onclick="calculateAge()">Calculate Age</button>
+                                <button class="btn btn-outline-secondary" onclick="setToday()">Use Today's Date</button>
+                            </div>
+                        </form>
+
+                        <!-- Results Section -->
+                        <div id="resultSection" class="result-box d-none">
+                            <!-- Exact Age -->
+                            <div class="text-center mb-4">
+                                <h4>Exact Age</h4>
+                                <div class="age-value" id="exactAge">25 years, 3 months, 15 days</div>
+                            </div>
+
+                            <!-- Detailed Breakdown -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="time-unit">
+                                        <p class="mb-1">Years</p>
+                                        <div class="time-unit-value" id="years">25</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="time-unit">
+                                        <p class="mb-1">Months</p>
+                                        <div class="time-unit-value" id="months">303</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="time-unit">
+                                        <p class="mb-1">Weeks</p>
+                                        <div class="time-unit-value" id="weeks">1,315</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="time-unit">
+                                        <p class="mb-1">Days</p>
+                                        <div class="time-unit-value" id="days">9,205</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Next Birthday Countdown -->
+                            <div class="text-center mt-4">
+                                <h5>Next Birthday</h5>
+                                <p id="nextBirthday">in 8 months, 15 days</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <!-- Features -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h4 class="card-title">Features</h4>
+                            <ul class="list-unstyled">
+                                <li><i class="bi bi-check-circle-fill text-success"></i> Precise age calculation</li>
+                                <li><i class="bi bi-check-circle-fill text-success"></i> Multiple time units</li>
+                                <li><i class="bi bi-check-circle-fill text-success"></i> Birthday countdown</li>
+                                <li><i class="bi bi-check-circle-fill text-success"></i> Date difference calculator</li>
+                                <li><i class="bi bi-check-circle-fill text-success"></i> Automatic updates</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Information -->
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">How It Works</h4>
+                            <p>This calculator provides precise calculations for:</p>
+                            <ul>
+                                <li>Exact age in years, months, and days</li>
+                                <li>Total time in various units</li>
+                                <li>Time until next birthday</li>
+                                <li>Accounts for leap years</li>
+                            </ul>
+                            <div class="alert alert-info">
+                                <small>Note: Calculations are based on the Gregorian calendar.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded dynamically -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/main.js"></script>
+    <script>
+        // Set default end date to today
+        function setToday() {
+            const today = new Date();
+            const formattedDate = today.toISOString().split('T')[0];
+            document.getElementById('endDate').value = formattedDate;
+            calculateAge();
+        }
+
+        // Calculate age and update display
+        function calculateAge() {
+            const startDate = new Date(document.getElementById('startDate').value);
+            const endDate = new Date(document.getElementById('endDate').value);
+
+            if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) return;
+            if (endDate < startDate) {
+                alert('End date must be after start date');
+                return;
+            }
+
+            const diffTime = Math.abs(endDate - startDate);
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            const diffWeeks = Math.floor(diffDays / 7);
+
+            // Calculate years, months, and remaining days
+            let years = endDate.getFullYear() - startDate.getFullYear();
+            let months = endDate.getMonth() - startDate.getMonth();
+            let days = endDate.getDate() - startDate.getDate();
+
+            if (days < 0) {
+                months--;
+                const lastMonth = new Date(endDate.getFullYear(), endDate.getMonth(), 0);
+                days += lastMonth.getDate();
+            }
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            // Calculate total months
+            const totalMonths = years * 12 + months;
+
+            // Update display
+            document.getElementById('resultSection').classList.remove('d-none');
+            document.getElementById('exactAge').textContent = `${years} years, ${months} months, ${days} days`;
+            document.getElementById('years').textContent = years;
+            document.getElementById('months').textContent = totalMonths;
+            document.getElementById('weeks').textContent = diffWeeks;
+            document.getElementById('days').textContent = diffDays;
+
+            // Calculate next birthday
+            calculateNextBirthday(startDate);
+        }
+
+        function calculateNextBirthday(birthDate) {
+            const today = new Date();
+            let nextBirthday = new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate());
+            
+            if (nextBirthday < today) {
+                nextBirthday.setFullYear(today.getFullYear() + 1);
+            }
+
+            const diffTime = nextBirthday - today;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            const months = Math.floor(diffDays / 30);
+            const remainingDays = diffDays % 30;
+
+            document.getElementById('nextBirthday').textContent = 
+                `in ${months} months, ${remainingDays} days`;
+        }
+
+        // Set today's date on load
+        window.addEventListener('load', setToday);
+
+        // Add input event listeners for real-time calculation
+        document.querySelectorAll('#ageForm input').forEach(input => {
+            input.addEventListener('input', calculateAge);
+        });
+    </script>
+</body>
+</html> 

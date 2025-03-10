@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hash Generator - Generate and Compare Hash Values</title>
+    <meta name="description" content="Generate various hash types including MD5, SHA-1, SHA-256, and more. Features file hashing and hash comparison.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .hash-card {
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        .hash-output {
+            font-family: monospace;
+            word-break: break-all;
+        }
+        .file-drop-zone {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        .file-drop-zone:hover, .file-drop-zone.dragover {
+            border-color: #0d6efd;
+        }
+        .hash-match {
+            color: #198754;
+        }
+        .hash-mismatch {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header will be loaded dynamically -->
+    <div id="header-placeholder"></div>
+
+    <main class="container py-4">
+        <div class="tool-container">
+            <div class="tool-header text-center mb-4">
+                <h1><i class="bi bi-hash"></i> Hash Generator</h1>
+                <p class="lead">Generate and compare hash values for text and files</p>
+            </div>
+
+            <!-- Hash Generation Tabs -->
+            <ul class="nav nav-tabs mb-4" id="hashTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="text-tab" data-bs-toggle="tab" data-bs-target="#text" type="button" role="tab">Text Hash</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="file-tab" data-bs-toggle="tab" data-bs-target="#file" type="button" role="tab">File Hash</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="compare-tab" data-bs-toggle="tab" data-bs-target="#compare" type="button" role="tab">Compare Hashes</button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="hashTabContent">
+                <!-- Text Hash Tab -->
+                <div class="tab-pane fade show active" id="text" role="tabpanel">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="hash-card p-4 mb-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Input Text</label>
+                                    <textarea class="form-control" id="textInput" rows="5" placeholder="Enter text to hash"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Hash Types</label>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="md5" checked>
+                                            <label class="form-check-label">MD5</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="sha1" checked>
+                                            <label class="form-check-label">SHA-1</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="sha256" checked>
+                                            <label class="form-check-label">SHA-256</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="sha512">
+                                            <label class="form-check-label">SHA-512</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary" onclick="generateTextHash()">
+                                    <i class="bi bi-hash"></i> Generate Hash
+                                </button>
+                            </div>
+
+                            <!-- Hash Results -->
+                            <div id="textHashResults" class="d-none">
+                                <h4>Hash Results</h4>
+                                <div class="list-group">
+                                    <div class="list-group-item" id="md5Result">
+                                        <h6 class="mb-1">MD5</h6>
+                                        <p class="hash-output mb-1"></p>
+                                        <button class="btn btn-sm btn-outline-secondary" onclick="copyHash(this)">
+                                            <i class="bi bi-clipboard"></i> Copy
+                                        </button>
+                                    </div>
+                                    <div class="list-group-item" id="sha1Result">
+                                        <h6 class="mb-1">SHA-1</h6>
+                                        <p class="hash-output mb-1"></p>
+                                        <button class="btn btn-sm btn-outline-secondary" onclick="copyHash(this)">
+                                            <i class="bi bi-clipboard"></i> Copy
+                                        </button>
+                                    </div>
+                                    <div class="list-group-item" id="sha256Result">
+                                        <h6 class="mb-1">SHA-256</h6>
+                                        <p class="hash-output mb-1"></p>
+                                        <button class="btn btn-sm btn-outline-secondary" onclick="copyHash(this)">
+                                            <i class="bi bi-clipboard"></i> Copy
+                                        </button>
+                                    </div>
+                                    <div class="list-group-item" id="sha512Result">
+                                        <h6 class="mb-1">SHA-512</h6>
+                                        <p class="hash-output mb-1"></p>
+                                        <button class="btn btn-sm btn-outline-secondary" onclick="copyHash(this)">
+                                            <i class="bi bi-clipboard"></i> Copy
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h4 class="card-title">Hash Types</h4>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-3">
+                                            <strong>MD5</strong>
+                                            <p class="text-muted small mb-0">128-bit hash, fast but not cryptographically secure</p>
+                                        </li>
+                                        <li class="mb-3">
+                                            <strong>SHA-1</strong>
+                                            <p class="text-muted small mb-0">160-bit hash, legacy algorithm</p>
+                                        </li>
+                                        <li class="mb-3">
+                                            <strong>SHA-256</strong>
+                                            <p class="text-muted small mb-0">256-bit hash, recommended for security</p>
+                                        </li>
+                                        <li>
+                                            <strong>SHA-512</strong>
+                                            <p class="text-muted small mb-0">512-bit hash, highest security level</p>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- File Hash Tab -->
+                <div class="tab-pane fade" id="file" role="tabpanel">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="hash-card p-4 mb-4">
+                                <div class="mb-4">
+                                    <div class="file-drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                                        <i class="bi bi-cloud-upload display-4"></i>
+                                        <p class="mb-0">Drop file here or click to select</p>
+                                        <input type="file" id="fileInput" class="d-none" onchange="handleFileSelect(event)">
+                                    </div>
+                                </div>
+                                <div id="fileInfo" class="d-none mb-3">
+                                    <h5>Selected File</h5>
+                                    <p class="mb-1" id="fileName"></p>
+                                    <p class="text-muted small" id="fileSize"></p>
+                                </div>
+                                <button class="btn btn-primary" onclick="generateFileHash()" id="generateFileHashBtn" disabled>
+                                    <i class="bi bi-hash"></i> Generate File Hash
+                                </button>
+                            </div>
+
+                            <!-- File Hash Results -->
+                            <div id="fileHashResults" class="d-none">
+                                <h4>File Hash Results</h4>
+                                <div class="list-group">
+                                    <div class="list-group-item">
+                                        <h6 class="mb-1">MD5</h6>
+                                        <p class="hash-output mb-1" id="fileMd5"></p>
+                                        <button class="btn btn-sm btn-outline-secondary" onclick="copyHash(this)">
+                                            <i class="bi bi-clipboard"></i> Copy
+                                        </button>
+                                    </div>
+                                    <div class="list-group-item">
+                                        <h6 class="mb-1">SHA-1</h6>
+                                        <p class="hash-output mb-1" id="fileSha1"></p>
+                                        <button class="btn btn-sm btn-outline-secondary" onclick="copyHash(this)">
+                                            <i class="bi bi-clipboard"></i> Copy
+                                        </button>
+                                    </div>
+                                    <div class="list-group-item">
+                                        <h6 class="mb-1">SHA-256</h6>
+                                        <p class="hash-output mb-1" id="fileSha256"></p>
+                                        <button class="btn btn-sm btn-outline-secondary" onclick="copyHash(this)">
+                                            <i class="bi bi-clipboard"></i> Copy
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">File Hashing</h4>
+                                    <p>Generate hash values for files to:</p>
+                                    <ul>
+                                        <li>Verify file integrity</li>
+                                        <li>Check for modifications</li>
+                                        <li>Compare with published checksums</li>
+                                    </ul>
+                                    <div class="alert alert-info">
+                                        <i class="bi bi-info-circle"></i> Files are processed locally in your browser.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Compare Hashes Tab -->
+                <div class="tab-pane fade" id="compare" role="tabpanel">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="hash-card p-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Hash Type</label>
+                                    <select class="form-select" id="compareHashType">
+                                        <option value="md5">MD5</option>
+                                        <option value="sha1">SHA-1</option>
+                                        <option value="sha256">SHA-256</option>
+                                        <option value="sha512">SHA-512</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">First Hash</label>
+                                    <input type="text" class="form-control font-monospace" id="hash1" placeholder="Enter or paste first hash">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Second Hash</label>
+                                    <input type="text" class="form-control font-monospace" id="hash2" placeholder="Enter or paste second hash">
+                                </div>
+                                <button class="btn btn-primary" onclick="compareHashes()">
+                                    <i class="bi bi-arrows-collapse"></i> Compare Hashes
+                                </button>
+
+                                <!-- Comparison Result -->
+                                <div id="compareResult" class="mt-4 d-none">
+                                    <div class="alert" role="alert">
+                                        <i class="bi"></i> <span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Hash Comparison</h4>
+                                    <p>Compare two hash values to:</p>
+                                    <ul>
+                                        <li>Verify file authenticity</li>
+                                        <li>Check data integrity</li>
+                                        <li>Validate checksums</li>
+                                    </ul>
+                                    <div class="alert alert-warning">
+                                        <i class="bi bi-exclamation-triangle"></i> Hash comparison is case-insensitive
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded dynamically -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="../js/main.js"></script>
+    <script>
+        // Text Hash Generation
+        function generateTextHash() {
+            const text = document.getElementById('textInput').value;
+            if (!text) {
+                alert('Please enter text to hash');
+                return;
+            }
+
+            const results = document.getElementById('textHashResults');
+            results.classList.remove('d-none');
+
+            if (document.getElementById('md5').checked) {
+                const md5Hash = CryptoJS.MD5(text).toString();
+                document.querySelector('#md5Result .hash-output').textContent = md5Hash;
+                document.getElementById('md5Result').classList.remove('d-none');
+            } else {
+                document.getElementById('md5Result').classList.add('d-none');
+            }
+
+            if (document.getElementById('sha1').checked) {
+                const sha1Hash = CryptoJS.SHA1(text).toString();
+                document.querySelector('#sha1Result .hash-output').textContent = sha1Hash;
+                document.getElementById('sha1Result').classList.remove('d-none');
+            } else {
+                document.getElementById('sha1Result').classList.add('d-none');
+            }
+
+            if (document.getElementById('sha256').checked) {
+                const sha256Hash = CryptoJS.SHA256(text).toString();
+                document.querySelector('#sha256Result .hash-output').textContent = sha256Hash;
+                document.getElementById('sha256Result').classList.remove('d-none');
+            } else {
+                document.getElementById('sha256Result').classList.add('d-none');
+            }
+
+            if (document.getElementById('sha512').checked) {
+                const sha512Hash = CryptoJS.SHA512(text).toString();
+                document.querySelector('#sha512Result .hash-output').textContent = sha512Hash;
+                document.getElementById('sha512Result').classList.remove('d-none');
+            } else {
+                document.getElementById('sha512Result').classList.add('d-none');
+            }
+        }
+
+        // File Hash Generation
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                document.getElementById('fileName').textContent = file.name;
+                document.getElementById('fileSize').textContent = formatFileSize(file.size);
+                document.getElementById('fileInfo').classList.remove('d-none');
+                document.getElementById('generateFileHashBtn').disabled = false;
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Handle drag and drop
+        const dropZone = document.getElementById('dropZone');
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                document.getElementById('fileInput').files = e.dataTransfer.files;
+                document.getElementById('fileName').textContent = file.name;
+                document.getElementById('fileSize').textContent = formatFileSize(file.size);
+                document.getElementById('fileInfo').classList.remove('d-none');
+                document.getElementById('generateFileHashBtn').disabled = false;
+            }
+        });
+
+        function generateFileHash() {
+            const file = document.getElementById('fileInput').files[0];
+            if (!file) {
+                alert('Please select a file');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                
+                // Generate hashes
+                const md5Hash = CryptoJS.MD5(CryptoJS.lib.WordArray.create(content)).toString();
+                const sha1Hash = CryptoJS.SHA1(CryptoJS.lib.WordArray.create(content)).toString();
+                const sha256Hash = CryptoJS.SHA256(CryptoJS.lib.WordArray.create(content)).toString();
+
+                // Display results
+                document.getElementById('fileHashResults').classList.remove('d-none');
+                document.getElementById('fileMd5').textContent = md5Hash;
+                document.getElementById('fileSha1').textContent = sha1Hash;
+                document.getElementById('fileSha256').textContent = sha256Hash;
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // Hash Comparison
+        function compareHashes() {
+            const hash1 = document.getElementById('hash1').value.trim().toLowerCase();
+            const hash2 = document.getElementById('hash2').value.trim().toLowerCase();
+
+            if (!hash1 || !hash2) {
+                alert('Please enter both hashes to compare');
+                return;
+            }
+
+            const resultDiv = document.getElementById('compareResult');
+            const alertDiv = resultDiv.querySelector('.alert');
+            const iconElement = alertDiv.querySelector('.bi');
+            const textElement = alertDiv.querySelector('span');
+
+            resultDiv.classList.remove('d-none');
+
+            if (hash1 === hash2) {
+                alertDiv.className = 'alert alert-success';
+                iconElement.className = 'bi bi-check-circle';
+                textElement.textContent = 'Hashes match!';
+            } else {
+                alertDiv.className = 'alert alert-danger';
+                iconElement.className = 'bi bi-x-circle';
+                textElement.textContent = 'Hashes do not match.';
+            }
+        }
+
+        // Copy hash to clipboard
+        function copyHash(button) {
+            const hash = button.previousElementSibling.textContent;
+            navigator.clipboard.writeText(hash)
+                .then(() => {
+                    const originalText = button.innerHTML;
+                    button.innerHTML = '<i class="bi bi-check"></i> Copied!';
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                    }, 2000);
+                })
+                .catch(err => console.error('Failed to copy hash: ', err));
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Categories - Multi-Tools</title>
+    <meta name="description" content="Browse all categories of our free online tools including image tools, SEO tools, text tools, developer tools, calculators, and more.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .category-card {
+            transition: transform 0.2s ease-in-out;
+        }
+        .category-card:hover {
+            transform: translateY(-5px);
+        }
+        .category-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header will be loaded dynamically -->
+    <div id="header-placeholder"></div>
+
+    <main class="container py-4">
+        <div class="tool-container">
+            <div class="tool-header text-center mb-5">
+                <h1>All Tool Categories</h1>
+                <p class="tool-description">Browse our extensive collection of free online tools by category.</p>
+            </div>
+
+            <div class="row">
+                <!-- Image Tools -->
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 category-card">
+                        <div class="card-body text-center">
+                            <i class="bi bi-image category-icon text-primary"></i>
+                            <h3 class="card-title h4">Image Tools</h3>
+                            <p class="card-text">Convert, resize, and manipulate images with our collection of image processing tools.</p>
+                            <div class="list-group mb-3">
+                                <a href="tools/image-to-png.html" class="list-group-item list-group-item-action">Image to PNG Converter</a>
+                                <a href="tools/image-to-jpg.html" class="list-group-item list-group-item-action">Image to JPG Converter</a>
+                                <a href="tools/image-resizer.html" class="list-group-item list-group-item-action">Image Resizer</a>
+                            </div>
+                            <a href="categories/image-tools.html" class="btn btn-primary">View All Image Tools</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEO Tools -->
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 category-card">
+                        <div class="card-body text-center">
+                            <i class="bi bi-graph-up category-icon text-success"></i>
+                            <h3 class="card-title h4">SEO Tools</h3>
+                            <p class="card-text">Optimize your website with our comprehensive SEO tools and utilities.</p>
+                            <div class="list-group mb-3">
+                                <a href="tools/meta-tag-generator.html" class="list-group-item list-group-item-action">Meta Tag Generator</a>
+                                <a href="tools/keyword-density.html" class="list-group-item list-group-item-action">Keyword Density Checker</a>
+                                <a href="tools/sitemap-generator.html" class="list-group-item list-group-item-action">Sitemap Generator</a>
+                            </div>
+                            <a href="categories/seo-tools.html" class="btn btn-success">View All SEO Tools</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Text Tools -->
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 category-card">
+                        <div class="card-body text-center">
+                            <i class="bi bi-text-paragraph category-icon text-info"></i>
+                            <h3 class="card-title h4">Text Tools</h3>
+                            <p class="card-text">Process and analyze text with our text manipulation tools.</p>
+                            <div class="list-group mb-3">
+                                <a href="tools/word-counter.html" class="list-group-item list-group-item-action">Word Counter</a>
+                                <a href="tools/case-converter.html" class="list-group-item list-group-item-action">Case Converter</a>
+                                <a href="tools/text-to-speech.html" class="list-group-item list-group-item-action">Text to Speech</a>
+                            </div>
+                            <a href="categories/text-tools.html" class="btn btn-info text-white">View All Text Tools</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Developer Tools -->
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 category-card">
+                        <div class="card-body text-center">
+                            <i class="bi bi-code-square category-icon text-danger"></i>
+                            <h3 class="card-title h4">Developer Tools</h3>
+                            <p class="card-text">Essential tools for web developers and programmers.</p>
+                            <div class="list-group mb-3">
+                                <a href="tools/json-formatter.html" class="list-group-item list-group-item-action">JSON Formatter</a>
+                                <a href="tools/html-formatter.html" class="list-group-item list-group-item-action">HTML Formatter</a>
+                                <a href="tools/css-minifier.html" class="list-group-item list-group-item-action">CSS Minifier</a>
+                            </div>
+                            <a href="categories/developer-tools.html" class="btn btn-danger">View All Developer Tools</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calculators -->
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 category-card">
+                        <div class="card-body text-center">
+                            <i class="bi bi-calculator category-icon text-warning"></i>
+                            <h3 class="card-title h4">Calculators</h3>
+                            <p class="card-text">Various calculators for different mathematical operations and conversions.</p>
+                            <div class="list-group mb-3">
+                                <a href="tools/percentage-calculator.html" class="list-group-item list-group-item-action">Percentage Calculator</a>
+                                <a href="tools/bmi-calculator.html" class="list-group-item list-group-item-action">BMI Calculator</a>
+                                <a href="tools/age-calculator.html" class="list-group-item list-group-item-action">Age Calculator</a>
+                            </div>
+                            <a href="categories/calculators.html" class="btn btn-warning">View All Calculators</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Unit Converters -->
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 category-card">
+                        <div class="card-body text-center">
+                            <i class="bi bi-arrow-left-right category-icon text-secondary"></i>
+                            <h3 class="card-title h4">Unit Converters</h3>
+                            <p class="card-text">Convert between different units of measurement.</p>
+                            <div class="list-group mb-3">
+                                <a href="tools/length-converter.html" class="list-group-item list-group-item-action">Length Converter</a>
+                                <a href="tools/weight-converter.html" class="list-group-item list-group-item-action">Weight Converter</a>
+                                <a href="tools/temperature-converter.html" class="list-group-item list-group-item-action">Temperature Converter</a>
+                            </div>
+                            <a href="categories/unit-converters.html" class="btn btn-secondary">View All Converters</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ad Space -->
+            <div class="ad-space mt-4">
+                <div class="ad-placeholder">Advertisement Space</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded dynamically -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html> 

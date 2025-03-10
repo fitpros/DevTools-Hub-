@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Formatter - Format and Beautify Code</title>
+    <meta name="description" content="Format and beautify your code with support for multiple programming languages. Features customizable formatting options and minification.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" rel="stylesheet">
+    <style>
+        .calc-card {
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        .CodeMirror {
+            height: 400px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+        }
+        .options-card {
+            position: sticky;
+            top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header will be loaded dynamically -->
+    <div id="header-placeholder"></div>
+
+    <main class="container py-4">
+        <div class="tool-container">
+            <div class="tool-header text-center mb-4">
+                <h1><i class="bi bi-file-code"></i> Code Formatter</h1>
+                <p class="lead">Format and beautify your code with support for multiple languages</p>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="calc-card p-4">
+                        <!-- Language Selection -->
+                        <div class="mb-3">
+                            <label class="form-label">Language</label>
+                            <select class="form-select" id="language" onchange="updateMode()">
+                                <option value="javascript">JavaScript</option>
+                                <option value="html">HTML</option>
+                                <option value="css">CSS</option>
+                                <option value="xml">XML</option>
+                                <option value="sql">SQL</option>
+                                <option value="python">Python</option>
+                                <option value="json">JSON</option>
+                            </select>
+                        </div>
+
+                        <!-- Code Input -->
+                        <div class="mb-3">
+                            <label class="form-label">Input Code</label>
+                            <textarea id="codeInput"></textarea>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="mb-4">
+                            <button class="btn btn-success me-2" onclick="formatCode()">
+                                <i class="bi bi-check-lg"></i> Format Code
+                            </button>
+                            <button class="btn btn-primary me-2" onclick="minifyCode()">
+                                <i class="bi bi-file-zip"></i> Minify
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="copyToClipboard()">
+                                <i class="bi bi-clipboard"></i> Copy
+                            </button>
+                        </div>
+
+                        <!-- Sample Code -->
+                        <div class="mb-3">
+                            <label class="form-label">Sample Code</label>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-primary btn-sm" onclick="loadSample('javascript')">JavaScript</button>
+                                <button class="btn btn-outline-primary btn-sm" onclick="loadSample('html')">HTML</button>
+                                <button class="btn btn-outline-primary btn-sm" onclick="loadSample('css')">CSS</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <!-- Formatting Options -->
+                    <div class="card options-card mb-4">
+                        <div class="card-body">
+                            <h4 class="card-title">Formatting Options</h4>
+                            <div class="mb-3">
+                                <label class="form-label">Indentation</label>
+                                <select class="form-select" id="indentSize">
+                                    <option value="2">2 spaces</option>
+                                    <option value="4" selected>4 spaces</option>
+                                    <option value="tab">Tab</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="insertSpaces" checked>
+                                    <label class="form-check-label">Use spaces for indentation</label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="lineBreaks" checked>
+                                    <label class="form-check-label">Add line breaks</label>
+                                </div>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="removeComments">
+                                <label class="form-check-label">Remove comments when minifying</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Keyboard Shortcuts -->
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Keyboard Shortcuts</h4>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>Format Code</span>
+                                    <code>Ctrl + Shift + F</code>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>Minify Code</span>
+                                    <code>Ctrl + Shift + M</code>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>Copy Code</span>
+                                    <code>Ctrl + Shift + C</code>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded dynamically -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/sql/sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify-html.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify-css.min.js"></script>
+    <script src="../js/main.js"></script>
+    <script>
+        let editor;
+
+        // Initialize CodeMirror
+        document.addEventListener('DOMContentLoaded', function() {
+            editor = CodeMirror.fromTextArea(document.getElementById('codeInput'), {
+                mode: 'javascript',
+                theme: 'monokai',
+                lineNumbers: true,
+                autoCloseBrackets: true,
+                matchBrackets: true,
+                indentUnit: 4,
+                tabSize: 4,
+                lineWrapping: true,
+                extraKeys: {
+                    'Ctrl-Shift-F': formatCode,
+                    'Ctrl-Shift-M': minifyCode,
+                    'Ctrl-Shift-C': copyToClipboard
+                }
+            });
+        });
+
+        // Update editor mode based on language selection
+        function updateMode() {
+            const language = document.getElementById('language').value;
+            editor.setOption('mode', language);
+        }
+
+        // Format code
+        function formatCode() {
+            const language = document.getElementById('language').value;
+            const code = editor.getValue();
+            const options = {
+                indent_size: parseInt(document.getElementById('indentSize').value),
+                indent_with_tabs: document.getElementById('indentSize').value === 'tab',
+                max_preserve_newlines: document.getElementById('lineBreaks').checked ? 2 : 0,
+                preserve_newlines: document.getElementById('lineBreaks').checked,
+                keep_array_indentation: true,
+                break_chained_methods: false,
+                indent_scripts: 'normal',
+                wrap_line_length: 0,
+                end_with_newline: true
+            };
+
+            let formattedCode;
+            switch(language) {
+                case 'html':
+                    formattedCode = html_beautify(code, options);
+                    break;
+                case 'css':
+                    formattedCode = css_beautify(code, options);
+                    break;
+                default:
+                    formattedCode = js_beautify(code, options);
+            }
+
+            editor.setValue(formattedCode);
+        }
+
+        // Minify code
+        function minifyCode() {
+            const code = editor.getValue();
+            const removeComments = document.getElementById('removeComments').checked;
+            
+            // Basic minification
+            let minified = code
+                .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+                .replace(/\s*{\s*/g, '{') // Remove spaces around braces
+                .replace(/\s*}\s*/g, '}')
+                .replace(/\s*:\s*/g, ':') // Remove spaces around colons
+                .replace(/\s*;\s*/g, ';') // Remove spaces around semicolons
+                .replace(/\s*,\s*/g, ',') // Remove spaces around commas
+                .trim();
+
+            if (removeComments) {
+                minified = minified
+                    .replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '$1') // Remove comments
+                    .replace(/^\s*\n/gm, ''); // Remove empty lines
+            }
+
+            editor.setValue(minified);
+        }
+
+        // Copy to clipboard
+        function copyToClipboard() {
+            const code = editor.getValue();
+            navigator.clipboard.writeText(code)
+                .then(() => alert('Code copied to clipboard!'))
+                .catch(err => console.error('Failed to copy code: ', err));
+        }
+
+        // Load sample code
+        function loadSample(language) {
+            let sample = '';
+            switch(language) {
+                case 'javascript':
+                    sample = `function calculateFactorial(n) {
+    if (n === 0 || n === 1) {
+        return 1;
+    }
+    
+    let factorial = 1;
+    for (let i = 2; i <= n; i++) {
+        factorial *= i;
+    }
+    
+    return factorial;
+}
+
+// Calculate factorial of 5
+const result = calculateFactorial(5);
+console.log(\`Factorial of 5 is: \${result}\`);`;
+                    break;
+                
+                case 'html':
+                    sample = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sample Page</title>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Welcome</h1>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <p>This is a sample HTML code.</p>
+        </main>
+    </div>
+</body>
+</html>`;
+                    break;
+                
+                case 'css':
+                    sample = `.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 1rem;
+}
+
+nav a {
+    color: #0d6efd;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+nav a:hover {
+    color: #0a58ca;
+}`;
+                    break;
+            }
+
+            document.getElementById('language').value = language;
+            updateMode();
+            editor.setValue(sample);
+        }
+    </script>
+</body>
+</html> 

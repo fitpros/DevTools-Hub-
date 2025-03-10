@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Percentage Calculator - Free Online Calculator</title>
+    <meta name="description" content="Calculate percentages easily. Find percentage of numbers, calculate discounts, markups, and percentage changes.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .calc-card {
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        .result-box {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        .result-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #198754;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header will be loaded dynamically -->
+    <div id="header-placeholder"></div>
+
+    <main class="container py-4">
+        <div class="tool-container">
+            <div class="tool-header text-center mb-4">
+                <h1><i class="bi bi-percent"></i> Percentage Calculator</h1>
+                <p class="lead">Calculate percentages, discounts, markups, and more</p>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Calculator Tabs -->
+                    <ul class="nav nav-tabs mb-4" id="calcTabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="basic-tab" data-bs-toggle="tab" href="#basic">Basic Percentage</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="discount-tab" data-bs-toggle="tab" href="#discount">Discount</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="increase-tab" data-bs-toggle="tab" href="#increase">Increase/Decrease</a>
+                        </li>
+                    </ul>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content" id="calcTabContent">
+                        <!-- Basic Percentage Calculator -->
+                        <div class="tab-pane fade show active" id="basic">
+                            <div class="calc-card p-4">
+                                <h3 class="mb-4">Basic Percentage Calculator</h3>
+                                <form id="basicForm" onsubmit="return false;">
+                                    <div class="mb-3">
+                                        <label class="form-label">What is</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="percentValue" step="any" required>
+                                            <span class="input-group-text">%</span>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">of</label>
+                                        <input type="number" class="form-control" id="totalValue" step="any" required>
+                                    </div>
+                                    <button class="btn btn-success" onclick="calculateBasicPercentage()">Calculate</button>
+                                    <div id="basicResult" class="result-box d-none">
+                                        <p class="mb-2">Result:</p>
+                                        <div class="result-value" id="basicResultValue"></div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Discount Calculator -->
+                        <div class="tab-pane fade" id="discount">
+                            <div class="calc-card p-4">
+                                <h3 class="mb-4">Discount Calculator</h3>
+                                <form id="discountForm" onsubmit="return false;">
+                                    <div class="mb-3">
+                                        <label class="form-label">Original Price</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">$</span>
+                                            <input type="number" class="form-control" id="originalPrice" step="any" required>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Discount Percentage</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="discountPercent" step="any" required>
+                                            <span class="input-group-text">%</span>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-success" onclick="calculateDiscount()">Calculate</button>
+                                    <div id="discountResult" class="result-box d-none">
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <p class="mb-2">You Save:</p>
+                                                <div class="result-value" id="savingsAmount"></div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <p class="mb-2">Final Price:</p>
+                                                <div class="result-value" id="finalPrice"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Increase/Decrease Calculator -->
+                        <div class="tab-pane fade" id="increase">
+                            <div class="calc-card p-4">
+                                <h3 class="mb-4">Percentage Change Calculator</h3>
+                                <form id="changeForm" onsubmit="return false;">
+                                    <div class="mb-3">
+                                        <label class="form-label">Original Value</label>
+                                        <input type="number" class="form-control" id="originalValue" step="any" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">New Value</label>
+                                        <input type="number" class="form-control" id="newValue" step="any" required>
+                                    </div>
+                                    <button class="btn btn-success" onclick="calculateChange()">Calculate</button>
+                                    <div id="changeResult" class="result-box d-none">
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <p class="mb-2">Percentage Change:</p>
+                                                <div class="result-value" id="percentageChange"></div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <p class="mb-2">Absolute Change:</p>
+                                                <div class="result-value" id="absoluteChange"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <!-- Calculator Info -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h4 class="card-title">Features</h4>
+                            <ul class="list-unstyled">
+                                <li><i class="bi bi-check-circle-fill text-success"></i> Basic percentage calculations</li>
+                                <li><i class="bi bi-check-circle-fill text-success"></i> Discount calculator</li>
+                                <li><i class="bi bi-check-circle-fill text-success"></i> Percentage change</li>
+                                <li><i class="bi bi-check-circle-fill text-success"></i> Increase/decrease calculator</li>
+                                <li><i class="bi bi-check-circle-fill text-success"></i> Real-time calculations</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Formula Guide -->
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Formula Guide</h4>
+                            <div class="mb-3">
+                                <h5>Basic Percentage</h5>
+                                <p><code>(percentage × value) ÷ 100</code></p>
+                            </div>
+                            <div class="mb-3">
+                                <h5>Discount</h5>
+                                <p><code>original × (1 - discount%/100)</code></p>
+                            </div>
+                            <div>
+                                <h5>Percentage Change</h5>
+                                <p><code>((new - original) ÷ original) × 100</code></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded dynamically -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/main.js"></script>
+    <script>
+        // Basic Percentage Calculator
+        function calculateBasicPercentage() {
+            const percent = parseFloat(document.getElementById('percentValue').value);
+            const total = parseFloat(document.getElementById('totalValue').value);
+            
+            if (!isNaN(percent) && !isNaN(total)) {
+                const result = (percent * total) / 100;
+                document.getElementById('basicResult').classList.remove('d-none');
+                document.getElementById('basicResultValue').textContent = result.toFixed(2);
+            }
+        }
+
+        // Discount Calculator
+        function calculateDiscount() {
+            const price = parseFloat(document.getElementById('originalPrice').value);
+            const discount = parseFloat(document.getElementById('discountPercent').value);
+            
+            if (!isNaN(price) && !isNaN(discount)) {
+                const savings = (price * discount) / 100;
+                const final = price - savings;
+                
+                document.getElementById('discountResult').classList.remove('d-none');
+                document.getElementById('savingsAmount').textContent = '$' + savings.toFixed(2);
+                document.getElementById('finalPrice').textContent = '$' + final.toFixed(2);
+            }
+        }
+
+        // Percentage Change Calculator
+        function calculateChange() {
+            const original = parseFloat(document.getElementById('originalValue').value);
+            const newVal = parseFloat(document.getElementById('newValue').value);
+            
+            if (!isNaN(original) && !isNaN(newVal)) {
+                const absoluteChange = newVal - original;
+                const percentageChange = (absoluteChange / original) * 100;
+                
+                document.getElementById('changeResult').classList.remove('d-none');
+                document.getElementById('percentageChange').textContent = 
+                    (percentageChange > 0 ? '+' : '') + percentageChange.toFixed(2) + '%';
+                document.getElementById('absoluteChange').textContent = 
+                    (absoluteChange > 0 ? '+' : '') + absoluteChange.toFixed(2);
+            }
+        }
+
+        // Add input event listeners for real-time calculation
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', function() {
+                const formId = this.closest('form').id;
+                switch(formId) {
+                    case 'basicForm':
+                        calculateBasicPercentage();
+                        break;
+                    case 'discountForm':
+                        calculateDiscount();
+                        break;
+                    case 'changeForm':
+                        calculateChange();
+                        break;
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

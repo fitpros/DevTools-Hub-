@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robots.txt Generator - Create and Validate Robots.txt Files</title>
+    <meta name="description" content="Generate and validate robots.txt files to control search engine crawling. Add user-agents, disallow/allow paths, and sitemap declarations.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .calc-card {
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        .result-box {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        .rule-group {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        #robotsOutput {
+            font-family: monospace;
+            white-space: pre-wrap;
+            background: #2d2d2d;
+            color: #fff;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header will be loaded dynamically -->
+    <div id="header-placeholder"></div>
+
+    <main class="container py-4">
+        <div class="tool-container">
+            <div class="tool-header text-center mb-4">
+                <h1><i class="bi bi-robot"></i> Robots.txt Generator</h1>
+                <p class="lead">Create and validate robots.txt files to control search engine crawling</p>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="calc-card p-4">
+                        <!-- Generator Form -->
+                        <form id="robotsForm" onsubmit="return false;">
+                            <!-- User-agent Rules -->
+                            <div id="userAgentRules">
+                                <h4 class="mb-3">User-agent Rules</h4>
+                                <div class="rule-group" id="rule-0">
+                                    <div class="mb-3">
+                                        <label class="form-label">User-agent</label>
+                                        <select class="form-select user-agent">
+                                            <option value="*">All robots (*)</option>
+                                            <option value="Googlebot">Googlebot</option>
+                                            <option value="Bingbot">Bingbot</option>
+                                            <option value="Yandex">Yandex</option>
+                                            <option value="custom">Custom</option>
+                                        </select>
+                                        <input type="text" class="form-control mt-2 custom-agent d-none" placeholder="Enter custom user-agent">
+                                    </div>
+                                    <div class="paths-container">
+                                        <div class="mb-3">
+                                            <label class="form-label">Path Rule</label>
+                                            <div class="input-group">
+                                                <select class="form-select" style="max-width: 150px;">
+                                                    <option value="Disallow">Disallow</option>
+                                                    <option value="Allow">Allow</option>
+                                                </select>
+                                                <input type="text" class="form-control" placeholder="/path/to/disallow">
+                                                <button class="btn btn-outline-danger" onclick="removePath(this)">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-outline-primary btn-sm" onclick="addPath(this)">
+                                        Add Path Rule
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-outline-success mb-4" onclick="addUserAgent()">
+                                Add Another User-agent
+                            </button>
+
+                            <!-- Sitemaps -->
+                            <div class="mb-4">
+                                <h4 class="mb-3">Sitemaps</h4>
+                                <div id="sitemapContainer">
+                                    <div class="input-group mb-2">
+                                        <input type="url" class="form-control" placeholder="https://example.com/sitemap.xml">
+                                        <button class="btn btn-outline-danger" onclick="removeSitemap(this)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <button class="btn btn-outline-primary btn-sm" onclick="addSitemap()">
+                                    Add Sitemap
+                                </button>
+                            </div>
+
+                            <!-- Crawl-delay -->
+                            <div class="mb-4">
+                                <h4 class="mb-3">Crawl-delay (Optional)</h4>
+                                <div class="input-group" style="max-width: 200px;">
+                                    <input type="number" class="form-control" id="crawlDelay" min="1" placeholder="e.g., 10">
+                                    <span class="input-group-text">seconds</span>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-success" onclick="generateRobots()">Generate Robots.txt</button>
+                        </form>
+
+                        <!-- Results Section -->
+                        <div id="resultSection" class="result-box d-none">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4 class="mb-0">Generated Robots.txt</h4>
+                                <button class="btn btn-primary" onclick="copyToClipboard()">
+                                    <i class="bi bi-clipboard"></i> Copy
+                                </button>
+                            </div>
+                            <pre id="robotsOutput"></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <!-- Information -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h4 class="card-title">About Robots.txt</h4>
+                            <p>A robots.txt file tells search engine crawlers which URLs they can access on your site. This is used mainly to avoid overloading your site with requests.</p>
+                            <div class="alert alert-info">
+                                <small>Note: Robots.txt is not a security measure. Use proper authentication for sensitive content.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Common Patterns -->
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Common Patterns</h4>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <strong>/admin/</strong>
+                                    <small class="d-block text-muted">Admin sections</small>
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>/wp-admin/</strong>
+                                    <small class="d-block text-muted">WordPress admin</small>
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>/search/</strong>
+                                    <small class="d-block text-muted">Search results</small>
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>*.pdf</strong>
+                                    <small class="d-block text-muted">PDF files</small>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded dynamically -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/main.js"></script>
+    <script>
+        // Add path rule to a user-agent group
+        function addPath(button) {
+            const container = button.previousElementSibling;
+            const newPath = document.createElement('div');
+            newPath.className = 'mb-3';
+            newPath.innerHTML = `
+                <div class="input-group">
+                    <select class="form-select" style="max-width: 150px;">
+                        <option value="Disallow">Disallow</option>
+                        <option value="Allow">Allow</option>
+                    </select>
+                    <input type="text" class="form-control" placeholder="/path/to/disallow">
+                    <button class="btn btn-outline-danger" onclick="removePath(this)">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            `;
+            container.appendChild(newPath);
+        }
+
+        // Remove path rule
+        function removePath(button) {
+            button.closest('.mb-3').remove();
+        }
+
+        // Add new user-agent rule group
+        function addUserAgent() {
+            const container = document.getElementById('userAgentRules');
+            const newRule = document.createElement('div');
+            const ruleId = container.children.length;
+            newRule.className = 'rule-group';
+            newRule.id = `rule-${ruleId}`;
+            newRule.innerHTML = `
+                <div class="mb-3">
+                    <label class="form-label">User-agent</label>
+                    <select class="form-select user-agent">
+                        <option value="*">All robots (*)</option>
+                        <option value="Googlebot">Googlebot</option>
+                        <option value="Bingbot">Bingbot</option>
+                        <option value="Yandex">Yandex</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                    <input type="text" class="form-control mt-2 custom-agent d-none" placeholder="Enter custom user-agent">
+                </div>
+                <div class="paths-container">
+                    <div class="mb-3">
+                        <label class="form-label">Path Rule</label>
+                        <div class="input-group">
+                            <select class="form-select" style="max-width: 150px;">
+                                <option value="Disallow">Disallow</option>
+                                <option value="Allow">Allow</option>
+                            </select>
+                            <input type="text" class="form-control" placeholder="/path/to/disallow">
+                            <button class="btn btn-outline-danger" onclick="removePath(this)">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-outline-primary btn-sm" onclick="addPath(this)">
+                    Add Path Rule
+                </button>
+            `;
+            container.appendChild(newRule);
+            
+            // Add event listener for custom user-agent
+            const select = newRule.querySelector('.user-agent');
+            const customInput = newRule.querySelector('.custom-agent');
+            select.addEventListener('change', function() {
+                customInput.classList.toggle('d-none', this.value !== 'custom');
+            });
+        }
+
+        // Add sitemap input
+        function addSitemap() {
+            const container = document.getElementById('sitemapContainer');
+            const newSitemap = document.createElement('div');
+            newSitemap.className = 'input-group mb-2';
+            newSitemap.innerHTML = `
+                <input type="url" class="form-control" placeholder="https://example.com/sitemap.xml">
+                <button class="btn btn-outline-danger" onclick="removeSitemap(this)">
+                    <i class="bi bi-trash"></i>
+                </button>
+            `;
+            container.appendChild(newSitemap);
+        }
+
+        // Remove sitemap input
+        function removeSitemap(button) {
+            button.closest('.input-group').remove();
+        }
+
+        // Generate robots.txt content
+        function generateRobots() {
+            let output = '';
+            
+            // Process each user-agent group
+            document.querySelectorAll('.rule-group').forEach(group => {
+                const userAgent = group.querySelector('.user-agent');
+                const customAgent = group.querySelector('.custom-agent');
+                
+                // Add User-agent line
+                output += 'User-agent: ' + (userAgent.value === 'custom' ? customAgent.value : userAgent.value) + '\n';
+                
+                // Add Crawl-delay if specified
+                const crawlDelay = document.getElementById('crawlDelay').value;
+                if (crawlDelay) {
+                    output += `Crawl-delay: ${crawlDelay}\n`;
+                }
+                
+                // Add path rules
+                group.querySelectorAll('.paths-container .input-group').forEach(pathGroup => {
+                    const type = pathGroup.querySelector('select').value;
+                    const path = pathGroup.querySelector('input').value;
+                    if (path) {
+                        output += `${type}: ${path}\n`;
+                    }
+                });
+                
+                output += '\n';
+            });
+            
+            // Add sitemaps
+            document.querySelectorAll('#sitemapContainer input').forEach(input => {
+                if (input.value) {
+                    output += `Sitemap: ${input.value}\n`;
+                }
+            });
+            
+            // Display output
+            document.getElementById('resultSection').classList.remove('d-none');
+            document.getElementById('robotsOutput').textContent = output;
+        }
+
+        // Copy to clipboard function
+        function copyToClipboard() {
+            const output = document.getElementById('robotsOutput');
+            navigator.clipboard.writeText(output.textContent)
+                .then(() => alert('Robots.txt content copied to clipboard!'))
+                .catch(err => console.error('Failed to copy text: ', err));
+        }
+
+        // Initialize event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add event listener for custom user-agent on initial rule
+            const select = document.querySelector('.user-agent');
+            const customInput = document.querySelector('.custom-agent');
+            select.addEventListener('change', function() {
+                customInput.classList.toggle('d-none', this.value !== 'custom');
+            });
+        });
+    </script>
+</body>
+</html> 
